@@ -1,103 +1,53 @@
-#include <iostream>
-#include <vector>
-using namespace std;
+class Relation:
+    def __init__(self, matrix):
+        self.matrix = matrix
+        self.size = len(matrix)
 
-class RELATION {
-private:
-    vector<vector<int>> matrix;
-    int size;
+    def is_reflexive(self):
+        for i in range(self.size):
+            if not self.matrix[i][i]:
+                return False
+        return True
 
-public:
-    RELATION(int n) {
-        size = n;
-        matrix.resize(n, vector<int>(n, 0));
-    }
+    def is_symmetric(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.matrix[i][j] != self.matrix[j][i]:
+                    return False
+        return True
 
-    void setElement(int i, int j, int value) {
-        matrix[i][j] = value;
-    }
+    def is_anti_symmetric(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.matrix[i][j] and self.matrix[j][i] and i != j:
+                    return False
+        return True
 
-    bool isReflexive() {
-        for (int i = 0; i < size; ++i) {
-            if (matrix[i][i] != 1) {
-                return false;
-            }
-        }
-        return true;
-    }
+    def is_transitive(self):
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.matrix[i][j]:
+                    for k in range(self.size):
+                        if self.matrix[j][k] and not self.matrix[i][k]:
+                            return False
+        return True
 
-    bool isSymmetric() {
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                if (matrix[i][j] != matrix[j][i]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+    def classify_relation(self):
+        is_equivalence = self.is_reflexive() and self.is_symmetric() and self.is_transitive()
+        is_partial_order = self.is_reflexive() and self.is_anti_symmetric() and self.is_transitive()
 
-    bool isAntiSymmetric() {
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                if (i != j && matrix[i][j] == 1 && matrix[j][i] == 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+        if is_equivalence:
+            return "Equivalence relation"
+        elif is_partial_order:
+            return "Partial order relation"
+        else:
+            return "None"
 
-    bool isTransitive() {
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                if (matrix[i][j] == 1) {
-                    for (int k = 0; k < size; ++k) {
-                        if (matrix[j][k] == 1 && matrix[i][k] != 1) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        return true;
-    }
+# Example usage:
+matrix = [[1, 0, 1],
+          [0, 1, 0],
+          [1, 0, 1]]
 
-    void checkRelationType() {
-        bool isEquivalence = isReflexive() && isSymmetric() && isTransitive();
-        bool isPartialOrder = isReflexive() && isAntiSymmetric() && isTransitive();
-
-        if (isEquivalence) {
-            cout << "The given relation is an Equivalence relation." << endl;
-        } else if (isPartialOrder) {
-            cout << "The given relation is a Partial Order relation." << endl;
-        } else {
-            cout << "The given relation is neither an Equivalence relation nor a Partial Order relation." << endl;
-        }
-    }
-};
-
-int main() {
-    int n;
-    cout << "Enter the size of the relation matrix: ";
-    cin >> n;
-
-    RELATION relation(n);
-
-    cout << "Enter the relation matrix (1 for true, 0 for false):" << endl;
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            cin >> relation.setElement(i, j);
-        }
-    }
-
-    cout << "Checking relation properties..." << endl;
-    cout << "Reflexive: " << (relation.isReflexive() ? "Yes" : "No") << endl;
-    cout << "Symmetric: " << (relation.isSymmetric() ? "Yes" : "No") << endl;
-    cout << "Anti-symmetric: " << (relation.isAntiSymmetric() ? "Yes" : "No") << endl;
-    cout << "Transitive: " << (relation.isTransitive() ? "Yes" : "No") << endl;
-
-    relation.checkRelationType();
-
-    return 0;
-}
+relation = Relation(matrix)
+classification = relation.classify_relation()
+print(classification)
