@@ -1,3 +1,5 @@
+#include<iostream>
+#include <vector>
 using namespace std;
 
 void computeDegrees(const vector<vector<int>>& graph, vector<int>& inDegrees, vector<int>& outDegrees) {
