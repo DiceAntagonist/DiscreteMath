@@ -1,240 +1,104 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
+from itertools import chain, combinations
 
-using namespace std;
 
-class Set {
-private:
-    vector<int> elements;
+class Set:
+    def __init__(self):
+        self.set1 = {1, 9, 8, 7, 9}
+        self.set2 = {0, 3, 4, 2, 7}
 
-public:
-    void addElement(int element) {
-        elements.push_back(element);
-    }
+    def display_sets(self):
+        print("set1:", self.set1)
+        print("set2:", self.set2)
 
-    void inputSet(int setSize) {
-        cout << "Enter the elements of the set: ";
-        for (int i = 0; i < setSize; ++i) {
-            int element;
-            cin >> element;
-            addElement(element);
-        }
-    }
+    def membership(self, element):
+        return element in self.set1 or element in self.set2
 
-    void displaySet() const {
-        cout << "Set elements: ";
-        for (const auto& element : elements) {
-            cout << element << " ";
-        }
-        cout << endl;
-    }
+    def powerset(self, set_input):
+        elements = list(set_input)
+        power_set = list(chain.from_iterable(combinations(elements, r) for r in range(len(elements) + 1)))
+        return power_set
 
-    bool isMember(int element) const {
-        return find(elements.begin(), elements.end(), element) != elements.end();
-    }
+    def subset(self):
+        return self.set1.issubset(self.set2) or self.set2.issubset(self.set1)
 
-    vector<vector<int>> powerset() const {
-        int n = elements.size();
-        int powerSetSize = pow(2, n);
-        vector<vector<int>> result;
-        for (int i = 0; i < powerSetSize; ++i) {
-            vector<int> subset;
-            for (int j = 0; j < n; ++j) {
-                if (i & (1 << j)) {
-                    subset.push_back(elements[j]);
-                }
-            }
-            result.push_back(subset);
-        }
-        return result;
-    }
+    def union(self):
+        return self.set1.union(self.set2)
 
-    bool subset(const Set& otherSet) const {
-        for (const auto& element : elements) {
-            if (!otherSet.isMember(element)) {
-                return false;
-            }
-        }
-        return true;
-    }
+    def intersection(self):
+        return self.set1.intersection(self.set2)
 
-    Set unionSet(const Set& otherSet) const {
-        Set unionSet;
-        unionSet.elements = elements;
-        for (const auto& element : otherSet.elements) {
-            if (!isMember(element)) {
-                unionSet.addElement(element);
-            }
-        }
-        return unionSet;
-    }
+    def complement(self, universal_set):
+        return universal_set.difference(self.set1)
 
-    Set intersection(const Set& otherSet) const {
-        Set intersectionSet;
-        for (const auto& element : elements) {
-            if (otherSet.isMember(element)) {
-                intersectionSet.addElement(element);
-            }
-        }
-        return intersectionSet;
-    }
+    def set_difference(self):
+        return self.set1.difference(self.set2)
 
-    Set complement(const Set& universalSet) const {
-        Set complementSet;
-        for (const auto& element : universalSet.elements) {
-            if (!isMember(element)) {
-                complementSet.addElement(element);
-            }
-        }
-        return complementSet;
-    }
+    def symmetric_difference(self):
+        return self.set1.symmetric_difference(self.set2)
 
-    Set setDifference(const Set& otherSet) const {
-        Set differenceSet;
-        for (const auto& element : elements) {
-            if (!otherSet.isMember(element)) {
-                differenceSet.addElement(element);
-            }
-        }
-        return differenceSet;
-    }
+    def cartesian_product(self):
+        return [(x, y) for x in self.set1 for y in self.set2]
 
-    Set symmetricDifference(const Set& otherSet) const {
-        Set symmetricDifferenceSet = unionSet(otherSet).setDifference(intersection(otherSet));
-        return symmetricDifferenceSet;
-    }
 
-    vector<pair<int, int>> cartesianProduct(const Set& otherSet) const {
-        vector<pair<int, int>> cartesianProductSet;
-        for (const auto& elementA : elements) {
-            for (const auto& elementB : otherSet.elements) {
-                cartesianProductSet.emplace_back(elementA, elementB);
-            }
-        }
-        return cartesianProductSet;
-    }
-};
+def display_menu():
+    print("------ Set Display Menu ------")
+    print("1. Display Sets")
+    print("2. Check Membership")
+    print("3. Power Set")
+    print("4. Check Subset")
+    print("5. Union")
+    print("6. Intersection")
+    print("7. Complement")
+    print("8. Set Difference")
+    print("9. Symmetric Difference")
+    print("10. Cartesian Product")
+    print("0. Exit")
 
-int main() {
-    int setSize;
 
-    cout << "Enter the size of the sets: ";
-    cin >> setSize;
+set_display = Set()
 
-    Set setA, setB;
+while True:
+    display_menu()
 
-    cout << "Enter the elements for Set A" << endl;
-    setA.inputSet(setSize);
+    choice = input("Enter your choice (0-10): ")
+    print()
 
-    cout << "Enter the elements for Set B" << endl;
-    setB.inputSet(setSize);
+    if choice == "1":
+        set_display.display_sets()
+    elif choice == "2":
+        element = input("Enter an element to check membership: ")
+        print("Membership:", set_display.membership(element))
+    elif choice == "3":
+        set_choice = input("Enter the set choice (1 or 2): ")
+        if set_choice == "1":
+            power_set = set_display.powerset(set_display.set1)
+        elif set_choice == "2":
+            power_set = set_display.powerset(set_display.set2)
+        else:
+            print("Invalid set choice.")
+            continue
+        print("Power Set:")
+        for subset in power_set:
+            print(subset)
+    elif choice == "4":
+        print("Is one set a subset of the other?", set_display.subset())
+    elif choice == "5":
+        print("Union:", set_display.union())
+    elif choice == "6":
+        print("Intersection:", set_display.intersection())
+    elif choice == "7":
+        universal_set = set(range(1, 10))
+        print("Complement of set1:", set_display.complement(universal_set))
+    elif choice == "8":
+        print("Set Difference:", set_display.set_difference())
+    elif choice == "9":
+        print("Symmetric Difference:", set_display.symmetric_difference())
+    elif choice == "10":
+        print("Cartesian Product:", set_display.cartesian_product())
+    elif choice == "0":
+        print("Exiting the program...")
+        break
+    else:
+        print("Invalid choice. Please try again.")
 
-    cout << "Set A: ";
-    setA.displaySet();
-
-    cout << "Set B: ";
-    setB.displaySet();
-
-    while (true) {
-        cout << endl;
-        cout << "SET Operations Menu:" << endl;
-        cout << "1. Check if an element belongs to the set" << endl;
-        cout << "2. List all elements of the power set" << endl;
-        cout << "3. Check if one set is a subset of the other" << endl;
-        cout << "4. Find the union of two sets" << endl;
-        cout << "5. Find the intersection of two sets" << endl;
-        cout << "6. Find the complement of a set" << endl;
-        cout << "7. Find the set difference between two sets" << endl;
-        cout << "8. Find the symmetric difference between two sets" << endl;
-        cout << "9. Find the Cartesian product of two sets" << endl;
-        cout << "0. Exit" << endl;
-
-        int choice;
-        cout << "Enter your choice (0-9): ";
-        cin >> choice;
-
-        if (choice == 0) {
-            break;
-        } else if (choice == 1) {
-            int setNum, element;
-            cout << "Enter the set number (1 or 2): ";
-            cin >> setNum;
-            cout << "Enter the element to check: ";
-            cin >> element;
-            if (setNum == 1) {
-                bool result = setA.isMember(element);
-                cout << element << (result ? " belongs to Set A" : " does not belong to Set A") << endl;
-            } else if (setNum == 2) {
-                bool result = setB.isMember(element);
-                cout << element << (result ? " belongs to Set B" : " does not belong to Set B") << endl;
-            } else {
-                cout << "Invalid set number." << endl;
-            }
-        } else if (choice == 2) {
-            vector<vector<int>> powerSetA = setA.powerset();
-            vector<vector<int>> powerSetB = setB.powerset();
-
-            cout << "Power Set of Set A:" << endl;
-            for (const auto& subset : powerSetA) {
-                cout << "{ ";
-                for (const auto& element : subset) {
-                    cout << element << " ";
-                }
-                cout << "}" << endl;
-            }
-
-            cout << "Power Set of Set B:" << endl;
-            for (const auto& subset : powerSetB) {
-                cout << "{ ";
-                for (const auto& element : subset) {
-                    cout << element << " ";
-                }
-                cout << "}" << endl;
-            }
-        } else if (choice == 3) {
-            bool isSubset = setA.subset(setB);
-            cout << (isSubset ? "Set A is a subset of Set B" : "Set A is not a subset of Set B") << endl;
-        } else if (choice == 4) {
-            Set unionSet = setA.unionSet(setB);
-            cout << "Union of Set A and Set B: ";
-            unionSet.displaySet();
-        } else if (choice == 5) {
-            Set intersectionSet = setA.intersection(setB);
-            cout << "Intersection of Set A and Set B: ";
-            intersectionSet.displaySet();
-        } else if (choice == 6) {
-            Set universalSet;
-            cout << "Enter the elements of the universal set: ";
-            universalSet.inputSet(setSize);
-
-            Set complementSetA = setA.complement(universalSet);
-            Set complementSetB = setB.complement(universalSet);
-
-            cout << "Complement of Set A: ";
-            complementSetA.displaySet();
-            cout << "Complement of Set B: ";
-            complementSetB.displaySet();
-        } else if (choice == 7) {
-            Set differenceSet = setA.setDifference(setB);
-            cout << "Set Difference (Set A - Set B): ";
-            differenceSet.displaySet();
-        } else if (choice == 8) {
-            Set symmetricDifferenceSet = setA.symmetricDifference(setB);
-            cout << "Symmetric Difference of Set A and Set B: ";
-            symmetricDifferenceSet.displaySet();
-        } else if (choice == 9) {
-            vector<pair<int, int>> cartesianProductSet = setA.cartesianProduct(setB);
-
-            cout << "Cartesian Product of Set A and Set B:" << endl;
-            for (const auto& pair : cartesianProductSet) {
-                cout << "(" << pair.first << ", " << pair.second << ")" << endl;
-            }
-        } else {
-            cout << "Invalid choice. Please try again." << endl;
-        }
-    }
-    return 0;
-}
-
+    print()
